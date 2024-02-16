@@ -4,10 +4,13 @@
 #include<cstdlib>
 using namespace std;
 void ejercicio_1() {
-	Juego *juego = new Juego();
-	juego->InicializarEspacio();
+	char** espacio = nullptr;
+	Juego *juego = new Juego(espacio);
+	juego->InicializarEspacio(espacio);
+	juego->MostrarTablero(espacio);
 }
 void menu() {
+	ejercicio_1();
 }
 int main()
 {
