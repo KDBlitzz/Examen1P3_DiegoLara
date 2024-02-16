@@ -18,5 +18,13 @@
     <ClCompile Include="Examen1P3_DiegoLara.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Juego.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Juego.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
