@@ -12,7 +12,7 @@ public:
 	~Juego();
 	void InicializarEspacio(char** &_espacio);
 	void MostrarTablero(char** &_espacio);
-	void MoverNave(int direccion);
+	void MoverNave(int direccion, char** &_espacio);
 	void VerificarColision();
 	void Aterrizar();
 	void JuegoTerminado();
