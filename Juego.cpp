@@ -81,8 +81,28 @@ void Juego::MostrarTablero(char**& _espacio)
 		cout << "]" << endl;
 	}
 }
-
-void Juego::MoverNave(int direccion, char** &_espacio)
+void Juego::VerificarColision(char**& _espacio)
+{
+	if (_espacio[navePosicionX][navePosicionY] == 'P')
+	{
+		cantidadCombustible += 20;
+		cout << "Ha ganado 20 de combustible!" << endl;
+		cout << "Tiene " << cantidadCombustible << " de combustible restante" << endl;
+	}
+	if (_espacio[navePosicionX][navePosicionY] == 'E')
+	{
+		cantidadPersonas -= 3;
+		cout << "Oh no! Han matado a 3 pasajeros!" << endl;
+		cout << "Tiene " << cantidadPersonas << " de pasajeros restantes" << endl;
+	}
+	if (_espacio[navePosicionX][navePosicionY] == 'S')
+	{
+		cantidadPersonas -= 5;
+		cout << "Oh no! Han matado a 3 pasajeros!" << endl;
+		cout << "Tiene " << cantidadPersonas << " de pasajeros restantes" << endl;
+	}
+}
+void Juego::MoverNave(int direccion, char**& _espacio)
 {
 	switch (direccion) {
 	case 1:
@@ -95,6 +115,13 @@ void Juego::MoverNave(int direccion, char** &_espacio)
 				{
 					_espacio[i][j] = ' ';
 					_espacio[i - 1][j] = 'H';
+					navePosicionX = i;
+					navePosicionY = j;
+					VerificarColision(_espacio);
+					break;
+				}
+				else if (_espacio[i][j] == 'H' && i == 0) {
+					cout << "Movimiento invalido" << endl;
 					break;
 				}
 			}
@@ -110,6 +137,13 @@ void Juego::MoverNave(int direccion, char** &_espacio)
 				{
 					_espacio[i][j] = ' ';
 					_espacio[i + 1][j] = 'H';
+					navePosicionX = i;
+					navePosicionY = j;
+					VerificarColision(_espacio);
+					break;
+				}
+				else if (_espacio[i][j] == 'H' && i == 5) {
+					cout << "Movimiento invalido" << endl;
 					break;
 				}
 			}
@@ -125,6 +159,13 @@ void Juego::MoverNave(int direccion, char** &_espacio)
 				{
 					_espacio[i][j] = ' ';
 					_espacio[i][j + 1] = 'H';
+					navePosicionX = i;
+					navePosicionY = j;
+					VerificarColision(_espacio);
+					break;
+				}
+				else if (_espacio[i][j] == 'H' && j == 5) {
+					cout << "Movimiento invalido" << endl;
 					break;
 				}
 			}
@@ -140,6 +181,13 @@ void Juego::MoverNave(int direccion, char** &_espacio)
 				{
 					_espacio[i][j] = ' ';
 					_espacio[i][j - 1] = 'H';
+					navePosicionX = i;
+					navePosicionY = j;
+					VerificarColision(_espacio);
+					break;
+				}
+				else if (_espacio[i][j] == 'H' && j == 0) {
+					cout << "Movimiento invalido" << endl;
 					break;
 				}
 			}
@@ -148,9 +196,6 @@ void Juego::MoverNave(int direccion, char** &_espacio)
 	}
 }
 
-void Juego::VerificarColision()
-{
-}
 
 void Juego::Aterrizar()
 {
@@ -171,4 +216,24 @@ Juego::~Juego()
 		delete[] espacio[i];
 	}
 	delete espacio;
+}
+
+int Juego::getcantidadPersonas()
+{
+	return cantidadPersonas;
+}
+
+void Juego::settcantidadPersonas(int cantidadPers)
+{
+	cantidadPersonas = cantidadPers;
+}
+
+int Juego::getcantidadCombustible()
+{
+	return cantidadCombustible;
+}
+
+void Juego::settcantidadCombustible(int cantidadCombust)
+{
+	cantidadCombustible = cantidadCombust;
 }
