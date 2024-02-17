@@ -3,7 +3,7 @@
 #include<ctime>
 #include<cstdlib>
 using namespace std;
-void Juego::InicializarEspacio(char**& _espacio)
+void Juego::InicializarEspacio(char**& _espacio) // metodo para inicializar el espacio en memoria de la matriz y poner los objetos al azar
 {
 	srand(time(NULL));
 	_espacio = new char* [6];
@@ -29,7 +29,7 @@ void Juego::InicializarEspacio(char**& _espacio)
 	randomColumna = (rand() % 5);
 	while (sol != 4)
 	{
-		if (_espacio[randomFila][randomColumna] != 'H')
+		if (_espacio[randomFila][randomColumna] != _espacio[0][0])
 		{
 			randomFila = (rand() % 5);
 			randomColumna = (rand() % 5);
@@ -41,7 +41,7 @@ void Juego::InicializarEspacio(char**& _espacio)
 	{
 		randomFila = (rand() % 5);
 		randomColumna = (rand() % 5);
-		if (_espacio[randomFila][randomColumna] != 'S' && _espacio[randomFila][randomColumna] != 'H')
+		if (_espacio[randomFila][randomColumna] != 'S' && _espacio[randomFila][randomColumna] != _espacio[0][0])
 		{
 			_espacio[randomFila][randomColumna] = 'E';
 			estrella++;
@@ -51,7 +51,7 @@ void Juego::InicializarEspacio(char**& _espacio)
 	{
 		randomFila = (rand() % 5);
 		randomColumna = (rand() % 5);
-		if (_espacio[randomFila][randomColumna] != 'E' && _espacio[randomFila][randomColumna] != 'H' && _espacio[randomFila][randomColumna] != 'S')
+		if (_espacio[randomFila][randomColumna] != 'E' && _espacio[randomFila][randomColumna] != _espacio[0][0] && _espacio[randomFila][randomColumna] != 'S')
 		{
 			_espacio[randomFila][randomColumna] = 'P';
 			planeta++;
@@ -60,16 +60,23 @@ void Juego::InicializarEspacio(char**& _espacio)
 	while (marte != 1) {
 		randomFila = (rand() % 5);
 		randomColumna = (rand() % 5);
-		if (_espacio[randomFila][randomColumna] != 'E' && _espacio[randomFila][randomColumna] != 'H' && _espacio[randomFila][randomColumna] != 'S' && _espacio[randomFila][randomColumna] != 'P')
+		if (_espacio[randomFila][randomColumna] != 'E' && _espacio[randomFila][randomColumna] != _espacio[0][0] && _espacio[randomFila][randomColumna] != 'S' && _espacio[randomFila][randomColumna] != 'P')
 		{
 			_espacio[randomFila][randomColumna] = 'M';
 			marte = 1;
 		}
 	}
-
+	if (!terminado)
+	{
+		for (size_t i = 0; i < 6; i++)
+		{
+			delete[] _espacio[i];
+		}
+		delete _espacio;
+	}
 }
 
-void Juego::MostrarTablero(char**& _espacio)
+void Juego::MostrarTablero(char**& _espacio) // metodo para mostrar tablero
 {
 	for (size_t i = 0; i < 6; i++)
 	{
@@ -81,7 +88,33 @@ void Juego::MostrarTablero(char**& _espacio)
 		cout << "]" << endl;
 	}
 }
-void Juego::VerificarColision(char**& _espacio)
+void Juego::JuegoTerminado() // Metodo para terminar el juego
+{
+	if (!terminado)
+	{
+		cout << "¡Felicidades, ha logrado llegar a Marte con " << cantidadPersonas << " pasajeros!" << endl;
+		terminado = false;
+	}
+	if (cantidadCombustible == 0)
+	{
+		cout << "Se ha quedado sin combustible y se ha perdido en el espacio con " << cantidadPersonas << " pasajeros" << endl;
+		terminado = false;
+	}
+	if (cantidadPersonas == 0)
+	{
+		cout << "Todos pasajeros han muerto antes de llegar a marte" << endl;
+		terminado = false;
+	}
+}
+void Juego::Aterrizar(char**& _espacio) // metodo para aterrizar el juego
+{
+	if (_espacio[navePosicionX][navePosicionY] == 'M')
+	{
+		terminado = false;
+		JuegoTerminado();
+	}
+}
+void Juego::VerificarColision(char**& _espacio) // metodo para verificiar colision
 {
 	if (_espacio[navePosicionX][navePosicionY] == 'P')
 	{
@@ -93,16 +126,30 @@ void Juego::VerificarColision(char**& _espacio)
 	{
 		cantidadPersonas -= 3;
 		cout << "Oh no! Han matado a 3 pasajeros!" << endl;
-		cout << "Tiene " << cantidadPersonas << " de pasajeros restantes" << endl;
+		if (cantidadPersonas <= 0)
+		{
+			cantidadPersonas = 0;
+			cout << "Tiene " << cantidadPersonas << " de pasajeros restantes" << endl;
+		}
+		else {
+			cout << "Tiene " << cantidadPersonas << " de pasajeros restantes" << endl;
+		}
 	}
 	if (_espacio[navePosicionX][navePosicionY] == 'S')
 	{
 		cantidadPersonas -= 5;
 		cout << "Oh no! Han matado a 3 pasajeros!" << endl;
-		cout << "Tiene " << cantidadPersonas << " de pasajeros restantes" << endl;
+		if (cantidadPersonas <= 0)
+		{
+			cantidadPersonas = 0;
+			cout << "Tiene " << cantidadPersonas << " de pasajeros restantes" << endl;
+		}
+		else {
+			cout << "Tiene " << cantidadPersonas << " de pasajeros restantes" << endl;
+		}
 	}
 }
-void Juego::MoverNave(int direccion, char**& _espacio)
+void Juego::MoverNave(int direccion, char**& _espacio) // Metodo para poder mover la nave
 {
 	switch (direccion) {
 	case 1:
@@ -113,11 +160,13 @@ void Juego::MoverNave(int direccion, char**& _espacio)
 			{
 				if (_espacio[i][j] == 'H' && i != 0)
 				{
-					_espacio[i][j] = ' ';
-					_espacio[i - 1][j] = 'H';
-					navePosicionX = i;
+					navePosicionX = i - 1;
 					navePosicionY = j;
 					VerificarColision(_espacio);
+					JuegoTerminado();
+					Aterrizar(_espacio);
+					_espacio[i][j] = ' ';
+					_espacio[i - 1][j] = 'H';
 					break;
 				}
 				else if (_espacio[i][j] == 'H' && i == 0) {
@@ -129,25 +178,22 @@ void Juego::MoverNave(int direccion, char**& _espacio)
 		break;
 	case 2:
 		cantidadCombustible -= 10;
-		for (int i = 0; i < 6; i++)
+		if (_espacio[navePosicionX][navePosicionY] == 'H' && navePosicionX != 5)
 		{
-			for (int j = 0; j < 6; j++)
-			{
-				if (_espacio[i][j] == 'H' && i != 5)
-				{
-					_espacio[i][j] = ' ';
-					_espacio[i + 1][j] = 'H';
-					navePosicionX = i;
-					navePosicionY = j;
-					VerificarColision(_espacio);
-					break;
-				}
-				else if (_espacio[i][j] == 'H' && i == 5) {
-					cout << "Movimiento invalido" << endl;
-					break;
-				}
-			}
+			navePosicionX = navePosicionX + 1;
+			navePosicionY = navePosicionY;
+			VerificarColision(_espacio);
+			JuegoTerminado();
+			Aterrizar(_espacio);
+			_espacio[navePosicionX - 1][navePosicionY] = ' ';
+			_espacio[navePosicionX][navePosicionY] = 'H';
+			break;
 		}
+		else if (_espacio[navePosicionX][navePosicionY] == 'H' && navePosicionX == 0) {
+			cout << "Movimiento invalido" << endl;
+			break;
+		}
+
 		break;
 	case 3:
 		cantidadCombustible -= 10;
@@ -157,11 +203,13 @@ void Juego::MoverNave(int direccion, char**& _espacio)
 			{
 				if (_espacio[i][j] == 'H' && j != 5)
 				{
+					navePosicionX = i;
+					navePosicionY = j + 1;
+					VerificarColision(_espacio);
+					JuegoTerminado();
+					Aterrizar(_espacio);
 					_espacio[i][j] = ' ';
 					_espacio[i][j + 1] = 'H';
-					navePosicionX = i;
-					navePosicionY = j;
-					VerificarColision(_espacio);
 					break;
 				}
 				else if (_espacio[i][j] == 'H' && j == 5) {
@@ -179,11 +227,13 @@ void Juego::MoverNave(int direccion, char**& _espacio)
 			{
 				if (_espacio[i][j] == 'H' && j != 0)
 				{
+					navePosicionX = i;
+					navePosicionY = j - 1;
+					VerificarColision(_espacio);
+					JuegoTerminado();
+					Aterrizar(_espacio);
 					_espacio[i][j] = ' ';
 					_espacio[i][j - 1] = 'H';
-					navePosicionX = i;
-					navePosicionY = j;
-					VerificarColision(_espacio);
 					break;
 				}
 				else if (_espacio[i][j] == 'H' && j == 0) {
@@ -197,25 +247,19 @@ void Juego::MoverNave(int direccion, char**& _espacio)
 }
 
 
-void Juego::Aterrizar()
+Juego::Juego()
 {
 }
 
-void Juego::JuegoTerminado()
+
+bool Juego::isTerminado()
 {
-}
-Juego::Juego(char** espacioMatriz) :
-	espacio(espacioMatriz)
-{
+	return terminado;
 }
 
-Juego::~Juego()
+void Juego::setTerminado(bool terminar)
 {
-	for (int i = 0; i < 6; i++)
-	{
-		delete[] espacio[i];
-	}
-	delete espacio;
+	terminado = terminar;
 }
 
 int Juego::getcantidadPersonas()
@@ -236,4 +280,12 @@ int Juego::getcantidadCombustible()
 void Juego::settcantidadCombustible(int cantidadCombust)
 {
 	cantidadCombustible = cantidadCombust;
+}
+Juego::~Juego()
+{
+	for (int i = 0; i < 6; i++)
+	{
+		delete[] espacio[i];
+	}
+	delete espacio;
 }

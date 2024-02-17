@@ -3,9 +3,9 @@
 #include<ctime>
 #include<cstdlib>
 using namespace std;
-void ejercicio_1() {
+void ejercicio_1() { // Ejercicio 1
 	char** espacio = nullptr;
-	Juego *juego = new Juego(espacio);
+	Juego* juego = new Juego();
 	bool terminar = true;
 	int moverse = 0;
 	int tripulante = 0;
@@ -27,6 +27,17 @@ void ejercicio_1() {
 	juego->InicializarEspacio(espacio);
 	juego->MostrarTablero(espacio);
 	while (terminar) {
+		if (!juego->isTerminado())
+		{
+			terminar = false;
+			delete juego;
+			for (size_t i = 0; i < 6; i++)
+			{
+				delete[] espacio[i];
+			}
+			delete espacio;
+			break;
+		}
 		cout << "Direccion a moverse" << endl;
 		cout << "1. Arriba" << endl;
 		cout << "2. Abajo" << endl;
@@ -49,14 +60,13 @@ void ejercicio_1() {
 		case 4:
 			juego->MoverNave(moverse, espacio);
 			juego->MostrarTablero(espacio);
-			
 			break;
 		default:
 			cout << "Opcion Invalida" << endl;
 		}
 	}
 }
-void menu() {
+void menu() { // Menu
 	int option = 0;
 	bool menu = true;
 	while (menu) {
@@ -78,5 +88,5 @@ void menu() {
 int main()
 {
 	srand(time(NULL));
-    menu();
+	menu();
 }
